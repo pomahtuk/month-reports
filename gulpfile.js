@@ -9,6 +9,7 @@ var changed = require('gulp-changed');
 var rename = require('gulp-rename');
 var pkg = require('./package.json');
 var fs = require('fs');
+var combine = gulp.combine;
 
 var paths = {
   src: 'app',

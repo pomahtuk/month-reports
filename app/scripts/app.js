@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pomahtuk.MonthReports', ['ngAnimate', 'ngCookies', 'ngResource', 'ngRoute', 'ngTouch', 'mgcrea.ngStrap'])
+angular.module('pomahtuk.MonthReports', ['ngAnimate', 'ngCookies', 'ngResource', 'ngRoute', 'ngSanitize', 'ngTouch', 'mgcrea.ngStrap'])
 
   .constant('version', 'v0.1.0')
 
