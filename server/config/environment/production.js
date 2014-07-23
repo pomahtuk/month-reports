@@ -18,6 +18,7 @@ module.exports = {
     uri:    process.env.MONGOLAB_URI ||
             process.env.MONGOHQ_URL ||
             process.env.OPENSHIFT_MONGODB_DB_URL+process.env.OPENSHIFT_APP_NAME ||
+            // 'mongodb://root:ipauk17y@lennon.mongohq.com:10054/app27714204'
             // 'mongodb://admin:Evyxa6SSRq5m@'+process.env.OPENSHIFT_MONGODB_DB_URL+process.env.OPENSHIFT_APP_NAME+'/monthreports'
             'mongodb://localhost/monthreports'
   }
