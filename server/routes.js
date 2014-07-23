@@ -9,11 +9,15 @@ var errors = require('./components/errors');
 module.exports = function(app) {
 
   // Insert routes below
+  app.use('/api/receiptRecords', require('./api/receipt_record'));
+  app.use('/api/croppedImages', require('./api/cropped_image'));
+  app.use('/api/originalImages', require('./api/original_image'));
   app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
+  app.use('/api/uploads', require('./api/uploads'));
 
   app.use('/auth', require('./auth'));
-  
+
   // All undefined asset or api routes should return a 404
   app.route('/:url(api|auth|components|app|bower_components|assets)/*')
    .get(errors[404]);

@@ -1,0 +1,67 @@
+.container
+  .row
+    .col-lg-12(ng-show="uploader.queue.length > 0")
+      p
+        | Прогресс загрузки:
+        div.progress
+          .progress-bar(role="progressbar" ng-style="{ 'width': uploader.progress + '%' }")
+
+.container
+  .row
+    .col-lg-12
+      | Данные за:&nbsp;
+      select(ng-model="selectedMonth" ng-options="month.name for month in months" ng-change="update(selectedMonth, null)")
+      select(ng-model="selectedYear" ng-options="year.name for year in years" ng-change="update(null, selectedYear)")
+      br
+      br
+
+.table-container(style='width:97%; margin: 0 auto;')
+  table.table
+    tr
+      td(width="50%")
+        table.table.table-striped.table-condensed.table-bordered(width='90%')
+          thead
+            tr
+              td
+                b Чек
+              td
+                b Дата операции
+              //- td
+              //-   b Продавец
+              td
+                b Сумма
+              td
+                b Описание
+              td
+                | &nbsp;
+          tbody
+            tr(ng-class="{'success':receipt.filled}" ng-repeat="receipt in receiptRecords")
+              td
+                a(href="{{receipt.image.url}}" ng-if="receipt.image") чек
+                span(ng-if="!receipt.image") нет чека
+              td
+                | {{receipt.Posted | date: 'mediumDate'}}
+              //- td
+              //-   | {{receipt.MerchantName}}
+              td
+                | {{receipt.BilledAmount}}
+              td
+                | {{receipt.MCCDescription}}
+              td
+                span.trash(ng-click='delete(receipt)')
+                  span.glyphicon.glyphicon-trash
+                | &nbsp;
+                a.edit(href="/receipts/{{receipt._id}}")
+                  span.glyphicon.glyphicon-pencil
+      td(width="50%")
+        .row(ng-repeat="row in rows")
+          .col-xs-6.col-md-3(ng-repeat="image in row")
+            a.thumbnail(href="#")
+              img(ng-src="{{image.url}}" alt="...")
+        hr
+        .row
+          .well.my-drop-zone.col-lg-12(ng-file-over="")
+            | Загрузить изображение
+            p
+            .col-lg-6
+              input(ng-file-select="" type="file" multiple="")

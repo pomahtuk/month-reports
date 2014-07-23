@@ -19,6 +19,9 @@ function onConnect(socket) {
 
   // Insert sockets below
   require('../api/thing/thing.socket').register(socket);
+  require('../api/receipt_record/receiptRecord.socket').register(socket);
+  require('../api/original_image/originalImage.socket').register(socket);
+  require('../api/cropped_image/croppedImage.socket').register(socket);
 }
 
 module.exports = function (socketio) {

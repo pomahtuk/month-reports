@@ -6,6 +6,7 @@ angular.module('monthReportsApp', [
   'ngSanitize',
   'ui.bootstrap',
   'ngRoute',
+  'angularFileUpload',
   'btford.socket-io'
 ])
   .config (($routeProvider, $locationProvider, $httpProvider) ->

@@ -13,6 +13,9 @@ var UserSchema = new Schema({
     type: String,
     default: 'user'
   },
+  tagList: String,
+  receipts : [{ type: Schema.Types.ObjectId, ref: 'ReceiptRecord' }],
+  images : [{ type: Schema.Types.ObjectId, ref: 'OriginalImage' }],
   hashedPassword: String,
   provider: String,
   salt: String,
@@ -42,7 +45,9 @@ UserSchema
   .get(function() {
     return {
       'name': this.name,
-      'role': this.role
+      'role': this.role,
+      'email': this.email,
+      'tagList': this.tagList
     };
   });
 

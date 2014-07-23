@@ -1,0 +1,31 @@
+div(ng-include='"components/navbar/navbar.html"')
+.container
+
+  //- name, email, tagList
+  form.form-horizontal(name='form', ng-submit='changeUser(form)', novalidate='')
+    .form-group
+      label.col-sm-3.control-label Почта
+      .col-sm-9
+        input.form-control(type='email', placeholder='e-mail', name='email', ng-model='user.email', ng-minlength='3', required='')
+        p.help-block(ng-show='(form.email.$error.minlength || form.email.$error.required) && (form.email.$dirty || submitted)')
+          | Email must be at least 3 characters.
+    .form-group
+      label.col-sm-3.control-label Имя
+      .col-sm-9
+        input.form-control(type='text', placeholder='name', name='name', ng-model='user.name', ng-minlength='3', required='')
+        p.help-block(ng-show='(form.name.$error.minlength || form.name.$error.required) && (form.name.$dirty || submitted)')
+          | Name must be at least 3 characters.
+    .form-group
+      label.col-sm-3.control-label Тэги
+      .col-sm-9
+        input.form-control(type='text', placeholder='tag list', name='tagList', ng-model='user.tagList', ng-minlength='3', required='')
+        p.help-block(ng-show='(form.tagList.$error.minlength || form.tagList.$error.required) && (form.tagList.$dirty || submitted)')
+          | tag list must be at least 3 characters.
+
+    .form-group
+      p.help-block.col-sm-offset-3.col-sm-9  {{ message }}
+
+    .form-group.form-actions
+      .col-sm-offset-3.col-sm-9
+        button.btn.btn-primary Сохранить
+        a.btn.btn-default(href="/users") Отменить

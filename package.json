@@ -1,15 +1,15 @@
 {
   "name": "month-reports",
-  "version": "0.0.0",
+  "version": "0.0.0-1",
   "main": "server/app.js",
   "dependencies": {
     "express": "~4.0.0",
     "morgan": "~1.0.0",
-    "body-parser": "~1.0.0",
+    "body-parser": "~1.0.2",
     "method-override": "~1.0.0",
     "static-favicon": "~1.0.1",
     "cookie-parser": "~1.0.1",
-    "express-session": "~1.0.2",
+    "express-session": "~1.0.4",
     "errorhandler": "~1.0.0",
     "compression": "~1.0.1",
     "lodash": "~2.4.1",
@@ -21,9 +21,17 @@
     "passport-local": "~0.1.6",
     "passport-google-oauth": "latest",
     "composable-middleware": "^0.3.0",
-    "connect-mongo": "^0.4.1",
+    "connect-mongo": "~0.4.1",
     "socket.io": "~0.9.16",
-    "socketio-jwt": "^2.0.2"
+    "socketio-jwt": "^2.0.2",
+    "gm": "~1.16.0",
+    "node-csv": "~0.1.2",
+    "csv": "~0.4.0",
+    "formidable": "~1.0.15",
+    "csv-parse": "0.0.5",
+    "promise": "~5.0.0",
+    "q": "~1.0.1",
+    "date-utils": "~1.2.16"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
@@ -90,5 +98,6 @@
     "start": "node server/app.js",
     "test": "grunt test",
     "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
-  }
+  },
+  "subdomain": "month-reports"
 }

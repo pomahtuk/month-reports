@@ -1,0 +1,72 @@
+.container
+  .row
+    .well.my-drop-zone.col-lg-12(ng-file-over="")
+      | Загрузить отчет
+      p
+      .col-lg-6
+        input(ng-file-select="" type="file" multiple="")
+
+    .col-lg-12
+      p
+        | Прогресс загрузки:
+        div.progress
+          .progress-bar(role="progressbar" ng-style="{ 'width': uploader.progress + '%' }")
+
+.container
+  .row
+    .col-lg-12
+      | Данные за:&nbsp;
+      select(ng-model="selectedMonth" ng-options="month.name for month in months" ng-change="update(selectedMonth, null)")
+      select(ng-model="selectedYear" ng-options="year.name for year in years" ng-change="update(null, selectedYear)")
+
+.table-container(style='width:97%; margin: 0 auto;')
+  .row
+    .col-lg-12
+      h2 Отчеты:
+
+      table.table.table-striped.table-condensed.table-bordered(width='90%')
+        thead
+          tr
+            td
+              b Пользователь
+            td
+              b Чек
+            td
+              b Дата операции
+            //- td
+            //-   b Продавец
+            td
+              b Сумма
+            td
+              b Описание
+            td
+              b Имя аккаунта
+            td
+              b Номер карты
+            td
+              | &nbsp;
+        tbody
+          tr(ng-class="{'success':receipt.filled}" ng-repeat="receipt in receiptRecords")
+            td
+              a(href="/users/{{receipt.user._id}}") {{receipt.user.name}}
+            td
+              a(href="{{receipt.image.url}}" ng-if="receipt.image") чек
+              span(ng-if="!receipt.image") нет чека
+            td
+              | {{receipt.Posted | date: 'mediumDate'}}
+            //- td
+            //-   | {{receipt.MerchantName}}
+            td
+              | {{receipt.BilledAmount}}
+            td
+              | {{receipt.MCCDescription}}
+            td
+              | {{receipt.AccountName}}
+            td
+              | {{receipt.AccountNumber}}
+            td
+              span.trash(ng-click='delete(receipt)')
+                span.glyphicon.glyphicon-trash
+              | &nbsp;
+              a.edit(href="/receipts/{{receipt._id}}")
+                span.glyphicon.glyphicon-pencil

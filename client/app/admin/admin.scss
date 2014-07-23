@@ -1,1 +1,12 @@
-.trash { color:rgb(209, 91, 71); }
+.trash { color:rgb(209, 91, 71); cursor: pointer; }
+.user-list-item {
+  display: block;
+  &:hover {
+    text-decoration: none;
+  }
+}
+.form-actions {
+  button:first-child {
+    margin: 0px 5px 0px 0px;
+  }
+}
