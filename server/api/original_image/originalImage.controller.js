@@ -13,6 +13,7 @@ var _ = require('lodash');
 var fs = require('fs');
 var path = require('path');
 var OriginalImage = require('./originalImage.model');
+var aws = require('../aws');
 
 function handleError(res, err) {
   return res.send(500, err);
@@ -68,12 +69,17 @@ exports.destroy = function (req, res) {
   OriginalImage.findById(req.params.id, function (err, image) {
     if (err) { return handleError(res, err); }
     if (!image) { return res.send(404); }
-    var new_path = path.join(process.env.PWD, '/client/', image.url);
     image.remove(function (err) {
       if (err) { return handleError(res, err); }
-      fs.unlink(new_path, function () {
-        console.log('deleted original image', new_path);
-      });
+      if (image.aws === true) {
+        aws.removeFile(image.awsKey, function (err, data) {
+          console.log('deleted original image from AWS', data);
+        })
+      } else {
+        fs.unlink(path.join(process.env.PWD, '/client/', image.url), function (err) {
+          console.log('deleted original image from server');
+        })
+      }
       return res.send(204);
     });
   });

@@ -6,8 +6,10 @@ var mongoose = require('mongoose'),
 var OriginalImageSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   croppedImages : [{ type: Schema.Types.ObjectId, ref: 'CroppedImage' }],
+  awsKey: String,
   name: String,
   size: Number,
+  aws: Boolean,
   url: String
 });
 

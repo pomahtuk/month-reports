@@ -19,44 +19,11 @@
   table.table
     tr
       td(width="50%")
-        table.table.table-striped.table-condensed.table-bordered(width='90%')
-          thead
-            tr
-              td
-                b Чек
-              td
-                b Дата операции
-              //- td
-              //-   b Продавец
-              td
-                b Сумма
-              td
-                b Описание
-              td
-                | &nbsp;
-          tbody
-            tr(ng-class="{'success':receipt.filled}" ng-repeat="receipt in receiptRecords")
-              td
-                a(href="{{receipt.image.url}}" ng-if="receipt.image") чек
-                span(ng-if="!receipt.image") нет чека
-              td
-                | {{receipt.Posted | date: 'mediumDate'}}
-              //- td
-              //-   | {{receipt.MerchantName}}
-              td
-                | {{receipt.BilledAmount}}
-              td
-                | {{receipt.MCCDescription}}
-              td
-                span.trash(ng-click='delete(receipt)')
-                  span.glyphicon.glyphicon-trash
-                | &nbsp;
-                a.edit(href="/receipts/{{receipt._id}}")
-                  span.glyphicon.glyphicon-pencil
+        .gridStyle(ng-grid="gridOptionsUser")
       td(width="50%")
         .row(ng-repeat="row in rows")
           .col-xs-6.col-md-3(ng-repeat="image in row")
-            a.thumbnail(href="#")
+            a.thumbnail(href="#" ng-click="open(image)")
               img(ng-src="{{image.url}}" alt="...")
         hr
         .row
@@ -65,3 +32,40 @@
             p
             .col-lg-6
               input(ng-file-select="" type="file" multiple="")
+
+script(type='text/ng-template' id="cropModal.html")
+  .modal-header
+    h3.modal-title Указать чеки
+  .modal-body
+    img-cropped(image='image' receipts='receipts')
+    //- | {{ image.currentSelection | json}}
+  .modal-footer
+    button.btn.btn-primary(ng-click='ok()') OK
+    button.btn.btn-warning(ng-click='cancel()') Cancel
+
+script(type='text/ng-template' id="afterCropModal.html")
+  .modal-header
+    h3.modal-title Привязать операцию
+  .modal-body
+    img.cropper-full(ng-src='{{image.url}}' align="center")
+    br
+    br
+    .btn.btn-default(ng-click='filterRecords = !filterRecords' ng-class="{'active': filterRecords}")
+      | Фильтры
+    br(ng-hide='filterRecords == true')
+    br(ng-hide='filterRecords == true')
+    .well.well-sm(ng-show='filterRecords == true')
+      datepicker(ng-model="scopeDate" show-weeks="false" starting-day="1" class='half inline-block')
+      span.hidden(data-role='resultingDate') {{scopeDate | date: 'medium' }}
+      .serch-filed.inline-block.margin-left
+        .btn-group
+          button.btn.btn-success(ng-click='applyFilters()')
+            | Применить
+          button.btn.btn-default(ng-click='resetFilters()')
+            | Сбросить
+    .gridModalStyle(ng-grid="gridOptionsFull")
+    .details
+      | {{ gridOptionsFull.selectedItems[0] | json }}
+  .modal-footer
+    button.btn.btn-primary(ng-click='ok()') OK
+    button.btn.btn-warning(ng-click='cancel()') Cancel

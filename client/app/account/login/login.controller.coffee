@@ -1,20 +1,26 @@
 'use strict'
 
-angular.module('monthReportsApp').controller 'LoginCtrl', ($scope, Auth, $location, $window) ->
-  $scope.user = {}
-  $scope.errors = {}
-  $scope.login = (form) ->
-    $scope.submitted = true
+angular.module('monthReportsApp').controller 'LoginCtrl', [
+  '$scope'
+  'Auth'
+  '$location'
+  '$window'
+  ($scope, Auth, $location, $window) ->
+    $scope.user = {}
+    $scope.errors = {}
+    $scope.login = (form) ->
+      $scope.submitted = true
 
-    if form.$valid
-      # Logged in, redirect to home
-      Auth.login(
-        email: $scope.user.email
-        password: $scope.user.password
-      ).then(->
-        $location.path '/'
-      ).catch (err) ->
-        $scope.errors.other = err.message
+      if form.$valid
+        # Logged in, redirect to home
+        Auth.login(
+          email: $scope.user.email
+          password: $scope.user.password
+        ).then(->
+          $location.path '/'
+        ).catch (err) ->
+          $scope.errors.other = err.message
 
-  $scope.loginOauth = (provider) ->
-    $window.location.href = '/auth/' + provider
+    $scope.loginOauth = (provider) ->
+      $window.location.href = '/auth/' + provider
+  ]

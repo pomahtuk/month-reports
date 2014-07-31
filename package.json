@@ -30,7 +30,12 @@
     "formidable": "~1.0.15",
     "csv-parse": "0.0.5",
     "q": "~1.0.1",
-    "date-utils": "~1.2.16"
+    "date-utils": "~1.2.16",
+    "newrelic": "~1.8.1",
+    "aws-sdk": "~2.0.8",
+    "crypto": "0.0.3",
+    "request": "~2.39.0",
+    "mime": "~1.2.11"
   },
   "devDependencies": {
     "grunt": "~0.4.4",

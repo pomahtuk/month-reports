@@ -6,9 +6,11 @@ var mongoose = require('mongoose'),
 var CroppedImageSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   originalImage: { type: Schema.Types.ObjectId, ref: 'OriginalImage' },
-  selection: String,
+  receiptRecord: { type: Schema.Types.ObjectId, ref: 'ReceiptRecord' },
+  selection: Schema.Types.Mixed,
   name: String,
   size: Number,
+  aws: Boolean,
   url: String
 });
 

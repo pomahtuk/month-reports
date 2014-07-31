@@ -5,16 +5,22 @@
 'use strict';
 
 var errors = require('./components/errors');
+var aws = require('./api/aws');
 
 module.exports = function(app) {
 
   // Insert routes below
+  app.use('/api/expenseArticles', require('./api/expenseArticle'));
+  app.use('/api/projects', require('./api/project'));
   app.use('/api/receiptRecords', require('./api/receipt_record'));
   app.use('/api/croppedImages', require('./api/cropped_image'));
   app.use('/api/originalImages', require('./api/original_image'));
   app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
   app.use('/api/uploads', require('./api/uploads'));
+
+  app.get('/api/config', aws.getClientConfig);
+  app.get('/api/s3Policy', aws.getS3Policy);
 
   app.use('/auth', require('./auth'));
 

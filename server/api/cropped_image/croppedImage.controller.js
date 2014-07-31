@@ -13,6 +13,7 @@ var _ = require('lodash');
 var fs = require('fs');
 var path = require('path');
 var CroppedImage = require('./croppedImage.model');
+var aws = require('../aws');
 
 function handleError(res, err) {
   return res.send(500, err);
@@ -71,9 +72,9 @@ exports.destroy = function (req, res) {
     var new_path = path.join(process.env.PWD, '/client/', image.url);
     image.remove(function (err) {
       if (err) { return handleError(res, err); }
-      fs.unlink(new_path, function () {
-        console.log('deleted cropped image', new_path);
-      });
+      aws.removeFile(image.awsKey, function (err, data) {
+        console.log('deleted original image', data);
+      })
       return res.send(204);
     });
   });

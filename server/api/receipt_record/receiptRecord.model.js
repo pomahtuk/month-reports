@@ -26,7 +26,10 @@ var ReceiptRecordSchema = new Schema({
   ReferenceNbr: String,
   StatementCycle: String,
   AccountName: String,
-  AccountNumber: String
+  AccountNumber: String,
+  Description: { type: String, default: '' },
+  Project: { type: Schema.Types.ObjectId, ref: 'Project' },
+  Article: { type: Schema.Types.ObjectId, ref: 'Expensearticle' }
 });
 
 module.exports = mongoose.model('ReceiptRecord', ReceiptRecordSchema);
