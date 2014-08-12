@@ -19,8 +19,8 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
     ##
     ## Either use AWS or not. Remove before heroku deploy
     ##
-    $scope.AWS = false
-    # $scope.AWS = true
+    # $scope.AWS = false
+    $scope.AWS = true
 
     ##
     ## TODO:
