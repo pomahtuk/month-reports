@@ -19,6 +19,12 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
   border: dotted 3px lightgray;
 }
 
+.col-sm-4 {
+  .cropper-full {
+    width: 100%;
+  }
+}
+
 #target {
   width: 100%;
 }
@@ -99,4 +105,5 @@ $fa-font-path: "/bower_components/font-awesome/fonts";
 @import 'expenseArticle/expenseArticle.scss';
 @import 'main/main.scss';
 @import 'project/project.scss';
+@import 'receiptRecord/receiptRecord.scss';
 // endinjector

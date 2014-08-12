@@ -5,6 +5,7 @@ angular.module('monthReportsApp', [
   'ngResource',
   'ngSanitize',
   'ui.bootstrap',
+  'ui.select',
   'ngRoute',
   'angularFileUpload',
   'ngGrid',

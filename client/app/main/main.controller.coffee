@@ -22,8 +22,6 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
     $scope.AWS = false
     # $scope.AWS = true
 
-    window.sc = $scope
-
     ##
     ## TODO:
     ## Unify grid options - may be a servce?
@@ -36,6 +34,18 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
     $scope.isLoggedIn = Auth.isLoggedIn
     $scope.isAdmin = Auth.isAdmin
     $scope.user = Auth.getCurrentUser()
+
+    lang = 'ru'
+
+    if $scope.user?
+      if $scope.user.$promise?
+        $scope.user.$promise.then ->
+          lang = if $scope.user.langCode? and $scope.user.langCode is 'en'
+            $scope.user.langCode
+          else
+            'ru'
+
+          $scope.lang = lang
 
     columnDefs =
       filled:
@@ -50,7 +60,7 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
           </div>'
       image:
         field: 'image'
-        displayName: 'Чек'
+        displayName: 'Check'
         width: 70
         cellTemplate: '
           <div class="ngCellText" ng-class="col.colIndex()">
@@ -62,7 +72,7 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
         '
       Posted:
         field: 'Posted'
-        displayName: 'Дата'
+        displayName: 'Date'
         width: 100
         cellTemplate: '
           <div class="ngCellText" ng-class="col.colIndex()">
@@ -70,17 +80,17 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
           </div>'
       BilledAmount:
         field: 'BilledAmount'
-        displayName: 'Сумма'
+        displayName: 'Amount'
         width: 90
       MCCDescription:
         field: 'MCCDescription'
-        displayName: 'Описание'
+        displayName: 'Description'
       AccountName:
         field: 'AccountName'
-        displayName: 'Имя карты'
+        displayName: 'Card name'
       AccountNumber:
         field: 'AccountNumber'
-        displayName: 'Номер карты'
+        displayName: 'Card number'
       actions:
         displayName: ''
         width: 50
@@ -89,7 +99,7 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
             <span class="trash" ng-click="delete(row.entity)">
               <span class="glyphicon glyphicon-trash"></span>
             </span>&nbsp;
-            <a class="edit" href="/receipts/{{row.entity._id}}">
+            <a class="edit" href="/receiptRecord/{{row.entity._id}}">
               <span class="glyphicon glyphicon-pencil"></span>
             </a>
           </div>
@@ -108,51 +118,51 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
 
     $scope.months = [
       {
-        name: 'Январь'
+        name: 'January'
         value: 1
       }
       {
-        name: 'Февраль'
+        name: 'February'
         value: 2
       }
       {
-        name: 'Март'
+        name: 'March'
         value: 3
       }
       {
-        name: 'Апрель'
+        name: 'April'
         value: 4
       }
       {
-        name: 'Май'
+        name: 'May'
         value: 5
       }
       {
-        name: 'Июнь'
+        name: 'June'
         value: 6
       }
       {
-        name: 'Июль'
+        name: 'July'
         value: 7
       }
       {
-        name: 'Август'
+        name: 'August'
         value: 8
       }
       {
-        name: 'Сентябрь'
+        name: 'September'
         value: 9
       }
       {
-        name: 'Октябрь'
+        name: 'October'
         value: 10
       }
       {
-        name: 'Ноябрь'
+        name: 'November'
         value: 11
       }
       {
-        name: 'Декабрь'
+        name: 'December'
         value: 12
       }
     ]
@@ -224,16 +234,16 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
               $http.get('/api/originalImages?user='+$scope.user._id).success (originalImages) ->
                 $scope.originalImages = originalImages
 
-      # socket.syncUpdates 'originalImage', $scope.originalImages
-
     $scope.delete = (receipt) ->
-      $http.delete("/api/receiptRecords/#{receipt._id}").success (data) ->
-        angular.forEach $scope.receiptRecords, (r, i) ->
-          $scope.receiptRecords.splice i, 1  if r is receipt
+      if confirm 'Are you sure you want to delete this record?'
+        $http.delete("/api/receiptRecords/#{receipt._id}").success (data) ->
+          angular.forEach $scope.receiptRecords, (r, i) ->
+            $scope.receiptRecords.splice i, 1  if r is receipt
 
     $scope.deleteImage = (image) ->
-      $http.delete("/api/originalImages/#{image._id}").success (data) ->
-        $scope.getOriginlaImages()
+      if confirm 'Are you sure you want to delete this record?'
+        $http.delete("/api/originalImages/#{image._id}").success (data) ->
+          $scope.getOriginlaImages()
 
     $scope.getReceipts()
     $scope.getOriginlaImages()
@@ -298,6 +308,8 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
         selectedItem.filled = true
         selectedItem.image = image._id
         selectedItem.user = selectedItem.user._id
+        selectedItem.Project = data.project._id
+        selectedItem.Article = data.article._id
         image.receiptRecord = selectedItem._id
 
         if data.prevReceipt?
@@ -338,12 +350,27 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
         $scope.receipts = receipts
         $scope.filteredReceipts = receipts
         $scope.dt = new Date
+        $scope.lang = lang
+
+        $scope.project = {}
+        $scope.article = {}
+        $scope.expenseArticles = []
+        $scope.projects = []
+
+        $http.get('/api/projects').success (projects) ->
+          $scope.projects = projects
+          $scope.project.selected = projects[0]
+
+        $http.get('/api/expenseArticles').success (expenseArticles) ->
+          $scope.expenseArticles = expenseArticles
 
         $scope.ok =  ->
           data =
             prevReceipt: $scope.prevReceipt
             receipt: $scope.gridOptionsFull.selectedItems[0]
             image: image
+            project: $scope.project.selected
+            article: $scope.article.selected
           $modalInstance.close data
 
         $scope.cancel = ->
@@ -376,6 +403,10 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
         else
           currentReceipt = $scope.filteredReceipts[0]
 
+        if currentReceipt?
+          $scope.project.selected = currentReceipt.Project
+          $scope.article.selected = currentReceipt.Article
+
         $scope.gridOptionsFull.selectedItems.push currentReceipt
 
         $scope.resetFilters = ->
@@ -397,7 +428,6 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
             return true if posted.getTime() is $scope.scopeDate.getTime()
             return false
           )
-
 
     ]
 

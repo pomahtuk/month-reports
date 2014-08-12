@@ -47,19 +47,29 @@ exports.index = function (req, res) {
 
   // console.log(findCriteria);
 
-  ReceiptRecord.find(findCriteria).populate('user').populate('image').exec(function (err, receipts) {
-    if (err) { return handleError(res, err); }
-    return res.json(200, receipts);
-  });
+  ReceiptRecord.find(findCriteria)
+    .populate('user')
+    .populate('image')
+    .populate('Project')
+    .populate('Article')
+    .exec(function (err, receipts) {
+      if (err) { return handleError(res, err); }
+      return res.json(200, receipts);
+    });
 };
 
 // Get a single receipt
 exports.show = function (req, res) {
-  ReceiptRecord.findById(req.params.id, function (err, receipt) {
-    if (err) { return handleError(res, err); }
-    if (!receipt) { return res.send(404); }
-    return res.json(receipt);
-  });
+  ReceiptRecord.findById(req.params.id)
+    .populate('user')
+    .populate('image')
+    .populate('Project')
+    .populate('Article')
+    .exec(function (err, receipt) {
+      if (err) { return handleError(res, err); }
+      if (!receipt) { return res.send(404); }
+      return res.json(receipt);
+    });
 };
 
 // Creates a new receipt in the DB.

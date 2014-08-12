@@ -1,2 +1,22 @@
-.col-md-12
-    | This is the expenseArticle view.
+div(ng-include='"components/navbar/navbar.html"')
+.container
+  .row
+    button.btn.btn-default(ng-click="addArticle = !addArticle") Add expense article
+    br
+    br
+    .form-horizontal(ng-show="addArticle")
+      .form-group
+        label(class="col-sm-2 control-label") Russian name
+        .col-sm-10
+          input(class="form-control" ng-model="newArticle.name_ru")
+      .form-group
+        label(class="col-sm-2 control-label") English name
+        .col-sm-10
+          input(type="text" class="form-control" ng-model="newArticle.name_en")
+      .form-group
+        .btn-group.pull-right
+          button.btn.btn-default(ng-click="resetFrom()") Reset
+          button.btn.btn-primary(ng-click="createArticle()") Save
+      .clearfix
+    .grid(ng-if="articles.length > 0")
+      .gridModalStyle(ng-grid="gridOptions")

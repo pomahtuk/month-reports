@@ -2,14 +2,14 @@
   .row
     .col-lg-12(ng-show="uploader.queue.length > 0")
       p
-        | Прогресс загрузки:
+        | Upload progress:
         div.progress
           .progress-bar(role="progressbar" ng-style="{ 'width': uploader.progress + '%' }")
 
 .container
   .row
     .col-lg-12
-      | Данные за:&nbsp;
+      | Data for:&nbsp;
       select(ng-model="selectedMonth" ng-options="month.name for month in months" ng-change="update(selectedMonth, null)")
       select(ng-model="selectedYear" ng-options="year.name for year in years" ng-change="update(null, selectedYear)")
       br
@@ -28,14 +28,14 @@
         hr
         .row
           .well.my-drop-zone.col-lg-12(ng-file-over="")
-            | Загрузить изображение
+            | Upload images
             p
             .col-lg-6
               input(ng-file-select="" type="file" multiple="")
 
 script(type='text/ng-template' id="cropModal.html")
   .modal-header
-    h3.modal-title Указать чеки
+    h3.modal-title Select areas
   .modal-body
     img-cropped(image='image' receipts='receipts')
     //- | {{ image.currentSelection | json}}
@@ -45,13 +45,41 @@ script(type='text/ng-template' id="cropModal.html")
 
 script(type='text/ng-template' id="afterCropModal.html")
   .modal-header
-    h3.modal-title Привязать операцию
+    h3.modal-title Assign receipt record
   .modal-body
-    img.cropper-full(ng-src='{{image.url}}' align="center")
+    .row
+
+      .col-sm-4
+        img.cropper-full(ng-src='{{image.url}}' align="center")
+
+      .col-sm-5
+        h4
+          | Select project and expense type
+
+        ui-select(ng-model="project.selected" theme="bootstrap")
+          ui-select-match(placeholder="Select or search a project in the list...")
+            | {{$select.selected.name_en}} ({{$select.selected.name_ru}})
+          ui-select-choices(repeat="item in projects | filter: $select.search")
+            div(ng-bind-html="item.name_en | highlight: $select.search")
+            div(ng-bind-html="item.name_ru | highlight: $select.search")
+
+        ui-select(ng-model="article.selected" theme="bootstrap")
+          ui-select-match(placeholder="Select or search a article in the list...")
+            | {{$select.selected.name_en}} ({{$select.selected.name_ru}})
+          ui-select-choices(repeat="item in expenseArticles | filter: $select.search")
+            div(ng-bind-html="item.name_en | highlight: $select.search")
+            div(ng-bind-html="item.name_ru | highlight: $select.search")
+
+      .col-sm-3
+        button.btn.btn-primary(ng-click='ok()') OK
+        button.btn.btn-warning(ng-click='cancel()') Cancel
+
+      .clearfix
+
     br
-    br
+
     .btn.btn-default(ng-click='filterRecords = !filterRecords' ng-class="{'active': filterRecords}")
-      | Фильтры
+      | Filters
     br(ng-hide='filterRecords == true')
     br(ng-hide='filterRecords == true')
     .well.well-sm(ng-show='filterRecords == true')
@@ -60,12 +88,10 @@ script(type='text/ng-template' id="afterCropModal.html")
       .serch-filed.inline-block.margin-left
         .btn-group
           button.btn.btn-success(ng-click='applyFilters()')
-            | Применить
+            | Apply
           button.btn.btn-default(ng-click='resetFilters()')
-            | Сбросить
+            | Reset
     .gridModalStyle(ng-grid="gridOptionsFull")
-    .details
-      | {{ gridOptionsFull.selectedItems[0] | json }}
   .modal-footer
     button.btn.btn-primary(ng-click='ok()') OK
     button.btn.btn-warning(ng-click='cancel()') Cancel

@@ -1,0 +1,181 @@
+div(ng-include='"components/navbar/navbar.html"')
+.container
+
+  //- image: { type: Schema.Types.ObjectId, ref: 'CroppedImage' },
+  //- Project: { type: Schema.Types.ObjectId, ref: 'Project' },
+  //- Article: { type: Schema.Types.ObjectId, ref: 'Expensearticle' }
+
+  form.form-horizontal(name='form', ng-submit='changeReceipt(form)', novalidate='')
+
+    .form-group
+      label.col-sm-3.control-label User
+      .col-sm-9
+        ui-select(ng-model="person.selected" theme="bootstrap")
+          ui-select-match(placeholder="Select or search a person in the list...")
+            | {{$select.selected.name}}
+          ui-select-choices(repeat="item in people | filter: $select.search")
+            div(ng-bind-html="item.name | highlight: $select.search")
+            small(ng-bind-html="item.email | highlight: $select.search")
+
+    .form-group
+      label.col-sm-3.control-label Project
+      .col-sm-9
+        ui-select(ng-model="project.selected" theme="bootstrap")
+          ui-select-match(placeholder="Select or search a project in the list...")
+            | {{$select.selected.name_en}} ({{$select.selected.name_ru}})
+          ui-select-choices(repeat="item in projects | filter: $select.search")
+            div(ng-bind-html="item.name_en | highlight: $select.search")
+            div(ng-bind-html="item.name_ru | highlight: $select.search")
+
+    .form-group
+      label.col-sm-3.control-label Article
+      .col-sm-9
+        ui-select(ng-model="article.selected" theme="bootstrap")
+          ui-select-match(placeholder="Select or search a article in the list...")
+            | {{$select.selected.name_en}} ({{$select.selected.name_ru}})
+          ui-select-choices(repeat="item in expenseArticles | filter: $select.search")
+            div(ng-bind-html="item.name_en | highlight: $select.search")
+            div(ng-bind-html="item.name_ru | highlight: $select.search")
+
+    .form-group
+      label.col-sm-3.control-label Posted
+      .col-sm-9
+        .input-group
+          input.form-control(type="text" datepicker-popup="dd-MMMM-yyyy" ng-model="receipt.Posted" is-open="opened_Posted" datepicker-options="dateOptions" ng-required="true" close-text="Close")
+          span.input-group-btn
+            button.btn.btn-default(type="button" ng-click="open($event, 'Posted')")
+              i.glyphicon.glyphicon-calendar
+
+        p.help-block(ng-show='(form.Posted.$error.minlength || form.Posted.$error.required) && (form.Posted.$dirty || submitted)')
+          | Posted must be at least 3 characters.
+
+    .form-group
+      label.col-sm-3.control-label Occurred
+      .col-sm-9
+        .input-group
+          input.form-control(type="text" datepicker-popup="dd-MMMM-yyyy" ng-model="receipt.Occurred" is-open="opened_Occurred" datepicker-options="dateOptions" ng-required="true" close-text="Close")
+          span.input-group-btn
+            button.btn.btn-default(type="button" ng-click="open($event, 'Occurred')")
+              i.glyphicon.glyphicon-calendar
+        p.help-block(ng-show='(form.Occurred.$error.minlength || form.Occurred.$error.required) && (form.Occurred.$dirty || submitted)')
+          | Occurred must be at least 3 characters.
+
+    .form-group
+      label.col-sm-3.control-label MerchantName
+      .col-sm-9
+        input.form-control(type='text', placeholder='MerchantName', name='MerchantName', ng-model='receipt.MerchantName', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.MerchantName.$error.minlength || form.MerchantName.$error.required) && (form.MerchantName.$dirty || submitted)')
+          | MerchantName must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label MerchantCity
+      .col-sm-9
+        input.form-control(type='text', placeholder='MerchantCity', name='MerchantCity', ng-model='receipt.MerchantCity', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.MerchantCity.$error.minlength || form.MerchantCity.$error.required) && (form.MerchantCity.$dirty || submitted)')
+          | MerchantCity must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label MerchantState
+      .col-sm-9
+        input.form-control(type='text', placeholder='MerchantState', name='MerchantState', ng-model='receipt.MerchantState', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.MerchantState.$error.minlength || form.MerchantState.$error.required) && (form.MerchantState.$dirty || submitted)')
+          | MerchantState must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label MerchantZipCode
+      .col-sm-9
+        input.form-control(type='text', placeholder='MerchantZipCode', name='MerchantZipCode', ng-model='receipt.MerchantZipCode', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.MerchantZipCode.$error.minlength || form.MerchantZipCode.$error.required) && (form.MerchantZipCode.$dirty || submitted)')
+          | MerchantZipCode must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label MCC_SICCode
+      .col-sm-9
+        input.form-control(type='text', placeholder='MCC_SICCode', name='MCC_SICCode', ng-model='receipt.MCC_SICCode', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.MCC_SICCode.$error.minlength || form.MCC_SICCode.$error.required) && (form.MCC_SICCode.$dirty || submitted)')
+          | MCC_SICCode must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label MCCDescription
+      .col-sm-9
+        input.form-control(type='text', placeholder='MCCDescription', name='MCCDescription', ng-model='receipt.MCCDescription', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.MCCDescription.$error.minlength || form.MCCDescription.$error.required) && (form.MCCDescription.$dirty || submitted)')
+          | MCCDescription must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label OriginalAmount
+      .col-sm-9
+        input.form-control(type='text', placeholder='OriginalAmount', name='OriginalAmount', ng-model='receipt.OriginalAmount', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.OriginalAmount.$error.minlength || form.OriginalAmount.$error.required) && (form.OriginalAmount.$dirty || submitted)')
+          | OriginalAmount must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label CurrencyDesc
+      .col-sm-9
+        input.form-control(type='text', placeholder='CurrencyDesc', name='CurrencyDesc', ng-model='receipt.CurrencyDesc', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.CurrencyDesc.$error.minlength || form.CurrencyDesc.$error.required) && (form.CurrencyDesc.$dirty || submitted)')
+          | CurrencyDesc must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label ConversionRate
+      .col-sm-9
+        input.form-control(type='text', placeholder='ConversionRate', name='ConversionRate', ng-model='receipt.ConversionRate', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.ConversionRate.$error.minlength || form.ConversionRate.$error.required) && (form.ConversionRate.$dirty || submitted)')
+          | ConversionRate must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label BilledAmount
+      .col-sm-9
+        input.form-control(type='text', placeholder='BilledAmount', name='BilledAmount', ng-model='receipt.BilledAmount', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.BilledAmount.$error.minlength || form.BilledAmount.$error.required) && (form.BilledAmount.$dirty || submitted)')
+          | BilledAmount must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label Memo
+      .col-sm-9
+        input.form-control(type='text', placeholder='Memo', name='Memo', ng-model='receipt.Memo', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.Memo.$error.minlength || form.Memo.$error.required) && (form.Memo.$dirty || submitted)')
+          | Memo must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label DebitCredit
+      .col-sm-9
+        input.form-control(type='text', placeholder='DebitCredit', name='DebitCredit', ng-model='receipt.DebitCredit', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.DebitCredit.$error.minlength || form.DebitCredit.$error.required) && (form.DebitCredit.$dirty || submitted)')
+          | DebitCredit must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label ReferenceNbr
+      .col-sm-9
+        input.form-control(type='text', placeholder='ReferenceNbr', name='ReferenceNbr', ng-model='receipt.ReferenceNbr', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.ReferenceNbr.$error.minlength || form.ReferenceNbr.$error.required) && (form.ReferenceNbr.$dirty || submitted)')
+          | ReferenceNbr must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label StatementCycle
+      .col-sm-9
+        input.form-control(type='text', placeholder='StatementCycle', name='StatementCycle', ng-model='receipt.StatementCycle', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.StatementCycle.$error.minlength || form.StatementCycle.$error.required) && (form.StatementCycle.$dirty || submitted)')
+          | StatementCycle must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label AccountName
+      .col-sm-9
+        input.form-control(type='text', placeholder='AccountName', name='AccountName', ng-model='receipt.AccountName', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.AccountName.$error.minlength || form.AccountName.$error.required) && (form.AccountName.$dirty || submitted)')
+          | AccountName must be at least 2 characters.
+
+    .form-group
+      label.col-sm-3.control-label AccountNumber
+      .col-sm-9
+        input.form-control(type='text', placeholder='AccountNumber', name='AccountNumber', ng-model='receipt.AccountNumber', ng-minlength='2', required='')
+        p.help-block(ng-show='(form.AccountNumber.$error.minlength || form.AccountNumber.$error.required) && (form.AccountNumber.$dirty || submitted)')
+          | AccountNumber must be at least 2 characters.
+
+    .form-group
+      p.help-block.col-sm-offset-3.col-sm-9  {{ message }}
+
+    .form-group.form-actions
+      .col-sm-offset-3.col-sm-9
+        button.btn.btn-primary Сохранить
+        a.btn.btn-default(href="/") Отменить

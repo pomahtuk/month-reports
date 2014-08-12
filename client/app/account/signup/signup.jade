@@ -32,6 +32,15 @@ div(ng-include='"components/navbar/navbar.html"')
           p.help-block(ng-show='form.password.$error.mongoose')
             | {{ errors.password }}
 
+        .form-group(ng-class='{ "has-success": form.password.$valid && submitted,\
+        "has-error": form.password.$invalid && submitted }')
+          label Language code
+          input.form-control(type='text', name='langCode', ng-model='user.langCode', ng-minlength='2', required='', mongoose-error='')
+          p.help-block(ng-show='(form.langCode.$error.minlength || form.langCode.$error.required) && submitted')
+            | Lang code should be at least 2 characters
+          p.help-block(ng-show='form.langCode.$error.mongoose')
+            | {{ errors.langCode }}
+
         div
           button.btn.btn-inverse.btn-lg.btn-login(type='submit')
             | Sign up

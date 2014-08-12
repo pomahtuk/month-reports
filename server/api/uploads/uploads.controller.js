@@ -26,13 +26,6 @@ AWS.config.update(
 
 s3 = new AWS.S3();
 
-// {
-//   "accessKeyId": "AKIAJAOJ5UR5U5ARJKNA",
-//   "secretAccessKey": "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",
-//   "region": "us-west-2",
-//   "bucket": "month-reports"
-// }
-
 var ReceiptRecord = require('../receipt_record/receiptRecord.model');
 var OriginalImage = require('../original_image/originalImage.model');
 var CroppedImage = require('../cropped_image/croppedImage.model');
@@ -217,7 +210,6 @@ exports.createCropedVersion = function (req, res) {
       processing = imageCropper.crop(selection.w, selection.h, selection.x, selection.y);
       if (image.aws === true) {
         processing.stream(function(err, stdout, stderr) {
-          // console.log('ready crop');
           if (err) { handleError(res, err); }
           var buf = new Buffer('');
           stdout.on('data', function(data) {
@@ -238,8 +230,6 @@ exports.createCropedVersion = function (req, res) {
               if (err) { handleError(res, err); }
               var url = "http://" + imageData.Bucket + ".s3.amazonaws.com/" + imageData.Key;
               saveCroppedImage(image, selection, url, res)
-              // res.send(200, url)
-              // create cropped image
             });
           });
         })
@@ -247,7 +237,6 @@ exports.createCropedVersion = function (req, res) {
         processing.write(newPath, function (err) {
           if (err) { handleError(res, err); }
           saveCroppedImage(image, selection, '/uploads/' + newName, res)
-          // res.send(200, newPath)
         });
       }
 

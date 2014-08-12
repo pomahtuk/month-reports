@@ -14,6 +14,7 @@ var UserSchema = new Schema({
     default: 'user'
   },
   tagList: String,
+  langCode: String,
   receipts : [{ type: Schema.Types.ObjectId, ref: 'ReceiptRecord' }],
   images : [{ type: Schema.Types.ObjectId, ref: 'OriginalImage' }],
   hashedPassword: String,

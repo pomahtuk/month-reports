@@ -6,8 +6,18 @@ angular.module('monthReportsApp').controller 'NavbarCtrl', [
   'Auth'
   ($scope, $location, Auth) ->
     $scope.menu = [
-      title: 'Главная'
-      link: '/'
+      {
+        title: 'Главная'
+        link: '/'
+      }
+      {
+        title: 'Проекты'
+        link: '/project'
+      }
+      {
+        title: 'Статьи'
+        link: '/expenseArticle'
+      }
     ]
     $scope.isCollapsed = true
     $scope.isLoggedIn = Auth.isLoggedIn
