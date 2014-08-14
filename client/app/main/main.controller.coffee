@@ -48,6 +48,14 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
           $scope.lang = lang
 
     columnDefs =
+      user:
+        field: 'user'
+        displayName: 'User'
+        width: 150
+        cellTemplate: '
+          <div class="ngCellText" ng-class="col.colIndex()">
+            <span ng-cell-text><a ng-href="/users/{{row.getProperty(col.field)._id}}">{{row.getProperty(col.field).name}}</a></span>
+          </div>'
       filled:
         field: 'filled'
         displayName: '✓'
@@ -60,7 +68,7 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
           </div>'
       image:
         field: 'image'
-        displayName: 'Check'
+        displayName: 'Receipt'
         width: 70
         cellTemplate: '
           <div class="ngCellText" ng-class="col.colIndex()">
@@ -86,11 +94,32 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
         field: 'MCCDescription'
         displayName: 'Description'
       AccountName:
+        width: 150
         field: 'AccountName'
         displayName: 'Card name'
       AccountNumber:
+        width: 150
         field: 'AccountNumber'
         displayName: 'Card number'
+      Project:
+        field: 'Project'
+        displayName: 'Project'
+        width: 200
+        cellTemplate: '
+          <div class="ngCellText" ng-class="col.colIndex()">
+            <span ng-cell-text>
+              {{row.getProperty(col.field).name_en}}
+            </span>
+          </div>'
+      Article:
+        field: 'Article'
+        displayName: 'Article'
+        cellTemplate: '
+          <div class="ngCellText" ng-class="col.colIndex()">
+            <span ng-cell-text>
+              {{row.getProperty(col.field).name_en}}
+            </span>
+          </div>'
       actions:
         displayName: ''
         width: 50
@@ -195,6 +224,25 @@ angular.module('monthReportsApp').controller 'MainCtrl', [
         columnDefs.MCCDescription
         columnDefs.actions
       ]
+
+    $scope.gridOptionsAdmin =
+      data: 'filteredReceiptRecords'
+      showGroupPanel: true
+      enableColumnResize: true
+      rowTemplate: rowTemplate
+      columnDefs: [
+        columnDefs.user
+        columnDefs.image
+        columnDefs.Posted
+        columnDefs.BilledAmount
+        columnDefs.MCCDescription
+        columnDefs.AccountName
+        columnDefs.AccountNumber
+        columnDefs.Project
+        columnDefs.Article
+        columnDefs.actions
+      ]
+
 
     $scope.selectedMonth = $scope.months[date.getMonth()]
     $scope.selectedYear = $scope.years[date.getFullYear() - 2014]
