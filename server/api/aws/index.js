@@ -8,8 +8,8 @@ var AWS = require('aws-sdk'),
 
 AWS.config.update(
   {
-    "accessKeyId": "AKIAJAOJ5UR5U5ARJKNA",
-    "secretAccessKey": "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",
+    "accessKeyId": "AKIAIK5IKNCGG4VHW42A",
+    "secretAccessKey": "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",
     "region": "us-west-2",
     "bucket": "month-reports"
   }
