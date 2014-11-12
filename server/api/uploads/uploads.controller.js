@@ -1,3 +1,6 @@
+/*jslint indent: 2, nomen: true, node: true*/
+/*global process, require, console, exports, module, Buffer*/
+
 'use strict';
 
 var gm = require('gm'),
@@ -17,8 +20,8 @@ var gm = require('gm'),
 
 AWS.config.update(
   {
-    "accessKeyId": "AKIAJAOJ5UR5U5ARJKNA",
-    "secretAccessKey": "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",
+    "accessKeyId": process.env.AWS_KEY_ID,
+    "secretAccessKey": process.env.AWS_SECRET_KEY,
     "region": "",
     "bucket": "month-reports"
   }
@@ -36,13 +39,27 @@ function handleError(res, err, line) {
   return res.send(500, {err: err, line: line});
 }
 
-function populateReceiptRecordsFromCSV (parsed, res) {
-  // get promise
-
+function populateReceiptRecordsFromCSV(parsed, res) {
   var i, report, receipt, scope, userTag, regex, deferred, promises = [];
 
   parsed.splice(0, 1);
-  for (i = 0; i < parsed.length; i++) {
+
+  function receiptFoundCallback(err, receipt) {
+    if (err) { this.deferred.reject(new Error(err)); }
+    this.deferred.resolve(receipt);
+  }
+
+  function userFoundCallback(err, user) {
+    if (err) { this.deferred.reject(new Error(err)); }
+
+    if (user !== null) {
+      this.receipt.user = user._id;
+    }
+
+    ReceiptRecord.create(this.receipt, receiptFoundCallback.bind(this));
+  }
+
+  for (i = 0; i < parsed.length; i += 1) {
     report = parsed[i];
     deferred = Q.defer();
 
@@ -82,19 +99,7 @@ function populateReceiptRecordsFromCSV (parsed, res) {
     regex = new RegExp(userTag, 'i');
     userTag = userTag.toString('utf8');
 
-    User.findOne({ tagList: regex }, (function (err, user) {
-      if (err) { this.deferred.reject(new Error(err)); }
-
-      if (user !== null) {
-        this.receipt.user = user._id;
-      }
-
-      ReceiptRecord.create(this.receipt, (function (err, receipt) {
-        if (err) { this.deferred.reject(new Error(err)); }
-        this.deferred.resolve(receipt);
-      }).bind(this));
-
-    }).bind(scope));
+    User.findOne({ tagList: regex }, userFoundCallback.bind(scope));
 
     promises.push(deferred.promise);
 
@@ -104,13 +109,13 @@ function populateReceiptRecordsFromCSV (parsed, res) {
     res.json(200, {'status': 'ok', 'type': 'receipt'});
   }).fail(function (error) {
     handleError(res, error);
-  })
+  });
 
 }
 
-function saveCroppedImage (image, selection, url, res) {
+function saveCroppedImage(image, selection, url, res) {
   var croppedImage, name;
-  name = url.split('/')
+  name = url.split('/');
   croppedImage = {
     user: image.user._id,
     originalImage: image._id,
@@ -119,14 +124,14 @@ function saveCroppedImage (image, selection, url, res) {
     size: 0,
     aws: image.aws,
     url: url
-  }
+  };
   CroppedImage.create(croppedImage, function (err, croppedImage) {
     if (err) { return handleError(res, err); }
-    image.croppedImages.push(croppedImage._id)
+    image.croppedImages.push(croppedImage._id);
     image.save(function (err, image) {
       if (err) { return handleError(res, err); }
       return res.json(201, croppedImage);
-    })
+    });
   });
 }
 
@@ -140,8 +145,8 @@ exports.index = function (req, res) {
       file_ext = files.file.name.split('.').pop(),
       index = old_path.lastIndexOf('/') + 1,
       file_name = old_path.substr(index),
-      new_path = path.join(process.env.PWD, '/client/uploads/', file_name + '.' + file_ext);
-    var image;
+      new_path = path.join(process.env.PWD, '/client/uploads/', file_name + '.' + file_ext),
+      image;
 
     console.log(fields.user);
 
@@ -191,9 +196,9 @@ exports.index = function (req, res) {
 };
 
 exports.createCropedVersion = function (req, res) {
-  var orignalId = req.body.imageId,
-    selection = JSON.parse(req.body.coords),
-    imgPath, newPath, processing, imageCropper, newName;
+  var imgPath, newPath, processing, imageCropper, newName,
+    orignalId = req.body.imageId,
+    selection = JSON.parse(req.body.coords);
 
   OriginalImage.findOne({'_id': orignalId}, function (err, image) {
     if (err) { handleError(res, err); }
@@ -203,47 +208,47 @@ exports.createCropedVersion = function (req, res) {
         imageCropper = gm(imgPath, image.name);
       } else {
         imgPath = path.join(process.env.PWD, '/client/uploads/', image.name);
-        newName = Math.random()*9999 + '-crop-' + image.name
+        newName = Math.random() * 9999 + '-crop-' + image.name;
         newPath = path.join(process.env.PWD, '/client/uploads/',  newName);
         imageCropper = gm(imgPath);
       }
       processing = imageCropper.crop(selection.w, selection.h, selection.x, selection.y);
       if (image.aws === true) {
-        processing.stream(function(err, stdout, stderr) {
+        processing.stream(function (err, stdout, stderr) {
           if (err) { handleError(res, err); }
           var buf = new Buffer('');
-          stdout.on('data', function(data) {
-             buf = Buffer.concat([buf, data]);
+          stdout.on('data', function (data) {
+            buf = Buffer.concat([buf, data]);
           });
           stdout.on('error', function (err) {
             handleError(res, err, 172);
           });
-          stdout.on('end', function(data) {
+          stdout.on('end', function (data) {
             var imageData = {
               Bucket: "month-reports",
-              Key: 'cropped/' + Math.random()*9999 + '-crop-' + image.name,
+              Key: 'cropped/' + Math.random() * 9999 + '-crop-' + image.name,
               ACL: 'public-read',
               Body: buf,
               ContentType: mime.lookup(image.name)
             };
-            s3.putObject(imageData, function(err, data) {
+            s3.putObject(imageData, function (err, data) {
               if (err) { handleError(res, err); }
               var url = "http://" + imageData.Bucket + ".s3.amazonaws.com/" + imageData.Key;
-              saveCroppedImage(image, selection, url, res)
+              saveCroppedImage(image, selection, url, res);
             });
           });
-        })
+        });
       } else {
         processing.write(newPath, function (err) {
           if (err) { handleError(res, err); }
-          saveCroppedImage(image, selection, '/uploads/' + newName, res)
+          saveCroppedImage(image, selection, '/uploads/' + newName, res);
         });
       }
 
     } else {
-      res.send(404, 'no image')
+      res.send(404, 'no image');
     }
-  })
+  });
 };
 
 exports.amazonCSVCallback = function (req, res) {
@@ -253,8 +258,8 @@ exports.amazonCSVCallback = function (req, res) {
     output = [];
 
   parser.on('readable', function () {
-    var record;
-    while (record = parser.read()) {
+    var record = parser.read();
+    while (record) {
       output.push(record);
     }
   });
@@ -267,8 +272,8 @@ exports.amazonCSVCallback = function (req, res) {
     populateReceiptRecordsFromCSV(output, res);
     aws.removeFile(awsKey, function (err, data) {
       console.log('deleted temp csv', data);
-    })
+    });
   });
 
-  request(filePath).pipe(parser)
-}
+  request(filePath).pipe(parser);
+};

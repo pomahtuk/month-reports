@@ -1,3 +1,6 @@
+/*jslint indent: 2, node: true*/
+/*global process, require, console, exports, module*/
+
 /**
  * Main application file
  */
@@ -14,7 +17,7 @@ var mongoose = require('mongoose');
 var config = require('./config/environment');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
-var mongoStore  = require('connect-mongo')(session);
+var MongoStore  = require('connect-mongo')(session);
 
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
@@ -22,7 +25,7 @@ mongoose.connect(config.mongo.uri, config.mongo.options);
 mongoose.set('debug', true);
 
 // Populate DB with sample data
-if(config.seedDB) { require('./config/seed'); }
+if (config.seedDB) { require('./config/seed'); }
 
 // Setup server
 var app = express();
@@ -31,10 +34,10 @@ var socketio = require('socket.io').listen(server);
 app.use(cookieParser());
 app.use(session({
   secret: 'so much secret so manager',
-  store: new mongoStore({
+  store: new MongoStore({
     url: config.mongo.uri,
     collection: 'managers_reposrts_auth'
-  }, function() {
+  }, function () {
     console.log('session db connection open');
   })
 }));
